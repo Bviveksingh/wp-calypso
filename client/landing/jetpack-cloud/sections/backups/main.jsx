@@ -1,25 +1,24 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import React, { Component } from 'react';
 
 /**
  * Internal dependencies
  */
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { requestActivityLogs } from 'state/data-getters';
-import DatePicker from '../../components/date-picker';
-import DailyBackupStatus from '../../components/daily-backup-status';
-import { getBackupAttemptsForDate, getDailyBackupDeltas } from './utils';
-import getRewindState from 'state/selectors/get-rewind-state';
-import QueryRewindState from 'components/data/query-rewind-state';
-import getSelectedSiteSlug from 'state/ui/selectors/get-selected-site-slug';
-import { getSitePurchases } from 'state/purchases/selectors';
-import QuerySitePurchases from 'components/data/query-site-purchases';
-import BackupDelta from '../../components/backup-delta';
 import { emptyFilter } from 'state/activity-log/reducer';
-
+import { getBackupAttemptsForDate, getDailyBackupDeltas } from './utils';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSitePurchases } from 'state/purchases/selectors';
+import { requestActivityLogs } from 'state/data-getters';
+import BackupDelta from '../../components/backup-delta';
+import DailyBackupStatus from '../../components/daily-backup-status';
+import DatePicker from '../../components/date-picker';
+import getRewindState from 'state/selectors/get-rewind-state';
+import getSelectedSiteSlug from 'state/ui/selectors/get-selected-site-slug';
+import QueryRewindState from 'components/data/query-rewind-state';
+import QuerySitePurchases from 'components/data/query-site-purchases';
 
 class BackupsPage extends Component {
 	state = {
@@ -47,10 +46,10 @@ class BackupsPage extends Component {
 
 		return (
 			<div>
-        <QueryRewindState siteId={ siteId } />
+				<QueryRewindState siteId={ siteId } />
 				<QuerySitePurchases siteId={ siteId } />
 				<DatePicker siteId={ siteId } initialDate={ initialDate } onChange={ this.dateChange } />
-								<DailyBackupStatus
+				<DailyBackupStatus
 					allowRestore={ allowRestore }
 					date={ currentDateSetting }
 					backupAttempts={ backupAttempts }
@@ -66,19 +65,19 @@ class BackupsPage extends Component {
 export default connect( state => {
 	const siteId = getSelectedSiteId( state );
 	const logs = siteId && requestActivityLogs( siteId, emptyFilter );
+	const rewind = getRewindState( state, siteId );
 	const sitePurchases = siteId && getSitePurchases( state, siteId );
-  const rewind = getRewindState( state, siteId );
-    const restoreStatus = rewind.rewind && rewind.rewind.status;
+
+	const restoreStatus = rewind.rewind && rewind.rewind.status;
 	const allowRestore =
 		'active' === rewind.state && ! ( 'queued' === restoreStatus || 'running' === restoreStatus );
 
 	return {
-      allowRestore,
-		sitePurchases,
-		siteId,
+		allowRestore,
 		logs: logs?.data ?? [],
 		rewind,
 		siteId,
+		sitePurchases,
 		siteSlug: getSelectedSiteSlug( state ),
 	};
 } )( BackupsPage );
