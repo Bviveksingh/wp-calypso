@@ -190,12 +190,13 @@ function uploadFiles( uploader, files, site ) {
 			site,
 		} );
 
-		reduxDispatch( createMediaItem( site, transientMedia ) );
-
 		// Abort upload if file fails to pass validation.
 		if ( getMediaItemErrors( reduxGetState(), siteId, transientMedia.ID ).length ) {
 			return Promise.resolve();
 		}
+
+		// If there are no errors, dispatch the create media item action
+		reduxDispatch( createMediaItem( site, transientMedia ) );
 
 		return lastUpload.then( () => {
 			// Achieve series upload by waiting for the previous promise to
